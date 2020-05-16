@@ -1,0 +1,16 @@
+# depslib dependency file v1.0
+1589648012 source:c:\users\user\documents\github\bmp_operations\main.cpp
+	<stdio.h>
+	<windows.h>
+	<iostream>
+	"BMP.h"
+
+1589648325 source:c:\users\user\documents\github\bmp_operations\src\bmp.cpp
+	"BMP.h"
+	<iostream>
+	<stdio.h>
+
+1589646947 c:\users\user\documents\github\bmp_operations\include\bmp.h
+	<iostream>
+	<stdio.h>
+
