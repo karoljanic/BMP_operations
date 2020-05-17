@@ -1,0 +1,19 @@
+# depslib dependency file v1.0
+1589752547 source:c:\users\user\desktop\bmpconverter\bmp2\main.cpp
+	<stdio.h>
+	<windows.h>
+	<conio.h>
+	<iostream>
+	<string>
+	"BMP.h"
+
+1589733476 c:\users\user\desktop\bmpconverter\bmp2\include\bmp.h
+	<iostream>
+	<stdio.h>
+
+1589752459 source:c:\users\user\desktop\bmpconverter\bmp2\src\bmp.cpp
+	"BMP.h"
+	<iostream>
+	<stdio.h>
+	<conio.h>
+
