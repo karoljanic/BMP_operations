@@ -173,7 +173,6 @@ void BMP::change_color_scale()
             bitmap[i][j].HSV_to_RGB();
         }
     }
-
 }
 
 void BMP::negative()
@@ -209,28 +208,183 @@ void BMP::grey_image()
     }
 }
 
-void BMP::blur_image()
+void BMP::filter(int **filter, int filter_size, int sum_of_filter, int i_p, int j_p)
 {
 
+    int m, n,f, sumR = 0, sumG = 0, sumB = 0;
+    int i = i_p -(filter_size-1)/2;
+    int j = j_p -(filter_size-1)/2;
+
+    for(int k = 0; k<filter_size; k++)
+    {
+        for(int l = 0; l<filter_size; l++)
+        {
+            m = i+k;
+            n = j+l;
+
+            if(m<0)
+                m = 0;
+            else if(m>picture_info.height-1)
+                m = picture_info.height-1;
+
+            if(n<0)
+                n = 0;
+            else if(n>picture_info.width-1)
+                n = picture_info.width-1;
+
+            //cout << int(bitmap[m][n].R) << "  " << int(bitmap[m][n].G) << "  " << int(bitmap[m][n].B) << endl;
+
+            sumR += int(bitmap[m][n].R)*filter[k][l];
+            sumG += int(bitmap[m][n].G)*filter[k][l];
+            sumB += int(bitmap[m][n].B)*filter[k][l];
+
+        }
+    }
+
+    sumR/=sum_of_filter;
+    sumG/=sum_of_filter;
+    sumB/=sum_of_filter;
+
+    if(sumR<0)
+        sumR = 0;
+    else if(sumR>255)
+        sumR = 255;
+
+    if(sumG<0)
+        sumG = 0;
+    else if(sumG>255)
+        sumG = 255;
+
+    if(sumB<0)
+        sumB = 0;
+    else if(sumB>255)
+        sumB = 255;
+
+    bitmap2[i_p][j_p].R = sumR;
+    bitmap2[i_p][j_p].G = sumG;
+    bitmap2[i_p][j_p].B = sumB;
+
+}
+
+void BMP::blur_image()
+{
+    bitmap2 = new Pixel *[picture_info.height];
+    for(int i = 0; i < picture_info.height; i++)
+        bitmap2[i] = new Pixel [picture_info.width];
+
+    int **f;
+    f = new int*[3];
+    for(int i = 0; i<3; i++)
+    {
+        f[i] = new int[3];
+    }
+    f[1][1] = -4;
+    f[0][0] = 1, f[0][2] = 1, f[2][0] = 1, f[2][2] = 1;
+    f[0][1] = 1, f[1][0] = 1, f[1][2] = 1, f[2][1] = 1;
+
+    for(int i = 0; i<picture_info.height; i++)
+    {
+        for(int j = 0; j<picture_info.width; j++)
+        {
+            filter(f, 3, 4, i, j);
+        }
+    }
+
+    for(int i = 0; i<picture_info.height; i++)
+    {
+        for(int j = 0; j<picture_info.width; j++)
+        {
+            bitmap[i][j] = bitmap2[i][j];
+        }
+    }
 }
 
 void BMP::sharpen_image()
 {
+    bitmap2 = new Pixel *[picture_info.height];
+    for(int i = 0; i < picture_info.height; i++)
+        bitmap2[i] = new Pixel [picture_info.width];
 
+    int **f;
+    f = new int*[3];
+    for(int i = 0; i<3; i++)
+    {
+        f[i] = new int[3];
+    }
+    f[1][1] = 5;
+    f[0][0] = 0, f[0][2] = 0, f[2][0] = 0, f[2][2] = 0;
+    f[0][1] = -1, f[1][0] = -1, f[1][2] = -1, f[2][1] = -1;
+
+    for(int i = 0; i<picture_info.height; i++)
+    {
+        for(int j = 0; j<picture_info.width; j++)
+        {
+            filter(f, 3, 1, i, j);
+        }
+    }
+
+    for(int i = 0; i<picture_info.height; i++)
+    {
+        for(int j = 0; j<picture_info.width; j++)
+        {
+            bitmap[i][j] = bitmap2[i][j];
+        }
+    }
 }
 
 void BMP::edge_detection()
 {
+    bitmap2 = new Pixel *[picture_info.height];
+    for(int i = 0; i < picture_info.height; i++)
+        bitmap2[i] = new Pixel [picture_info.width];
 
+    int **f;
+    f = new int*[3];
+    for(int i = 0; i<3; i++)
+    {
+        f[i] = new int[3];
+    }
+    f[1][1] = 4;
+    f[0][0] = 0, f[0][2] = 0, f[2][0] = 0, f[2][2] = 0;
+    f[0][1] = -1, f[1][0] = -1, f[1][2] = -1, f[2][1] = -1;
+
+    for(int i = 0; i<picture_info.height; i++)
+    {
+        for(int j = 0; j<picture_info.width; j++)
+        {
+            filter(f, 3, 1, i, j);
+        }
+    }
+
+    for(int i = 0; i<picture_info.height; i++)
+    {
+        for(int j = 0; j<picture_info.width; j++)
+        {
+            bitmap[i][j] = bitmap2[i][j];
+        }
+    }
 }
 
 void BMP::halftone_approximation()
 {
-
-}
-
-void BMP::histogram()
-{
+    for(int i = 0; i<picture_info.height; i++)
+    {
+        for(int j = 0; j<picture_info.width; j++)
+        {
+            if((bitmap[i][j].R + bitmap[i][j].G + bitmap[i][j].B)<381)
+            {
+                bitmap[i][j].R = 0;
+                bitmap[i][j].G = 0;
+                bitmap[i][j].B = 0;
+            }
+            else
+            {
+                bitmap[i][j].R = 255;
+                bitmap[i][j].G = 255;
+                bitmap[i][j].B = 255;
+            }
+        }
+    }
 
 }
 

@@ -35,11 +35,11 @@ int main()
                       "      Wyostrzenie       ",
                       "  Wykrywanie krawedzi   ",
                       " Aproksymacja poltonowa ",
-                      "        Histogram       ",
                       "  Akcent kolorystyczny  ",
                       "    Algorytm Retinex    ",
                       "    Efekt Tilt-Shift    ",
-                      "        Tonowanie       "};
+                      "        Tonowanie       ",
+                      "Filtruj wlasnym filtrem "};
 
     wyswietl(opcje,n,operacja);
     while(z != 13)
@@ -95,30 +95,36 @@ int main()
         photo.grey_image();
         break;
     case 5:
+        system("cls");
         photo.blur_image();
         break;
     case 6:
+        system("cls");
         photo.sharpen_image();
         break;
     case 7:
+        system("cls");
         photo.edge_detection();
         break;
     case 8:
+        system("cls");
         photo.halftone_approximation();
         break;
     case 9:
-        photo.histogram();
-        break;
-    case 10:
         photo.color_accent();
         break;
-    case 11:
+    case 10:
         photo.retinex();
         break;
-    case 12:
+    case 11:
         photo.tilf_shift();
-    case 13:
+        break;
+    case 12:
         photo.color_toning();
+        break;
+    case 13:
+        cout << "filtrowanie!" << endl;
+        break;
     }
 
     photo.export_picture(nazwa1);

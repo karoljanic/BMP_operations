@@ -123,6 +123,7 @@ class BMP
                 G = (unsigned char)(g*255);
                 B = (unsigned char)(b*255);
             }
+
         };
 
         FILE *picture;
@@ -141,17 +142,18 @@ class BMP
         void change_color_scale();
         void negative();
         void grey_image();
+        void filter(int **filter, int filter_size, int sum_of_filter, int i_p, int j_p);
         void blur_image();
         void sharpen_image();
         void edge_detection();
         void halftone_approximation();
-        void histogram();
         void color_accent();
         void retinex();
         void tilf_shift();
         void color_toning();
 
         Pixel **bitmap;
+        Pixel **bitmap2;
 
 };
 
