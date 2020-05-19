@@ -17,17 +17,17 @@
 	<stdio.h>
 	<conio.h>
 
-1589905455 source:c:\users\user\documents\github\bmp_operations\bmpconverter\bmp2\src\bmp.cpp
+1589929707 source:c:\users\user\documents\github\bmp_operations\bmpconverter\bmp2\src\bmp.cpp
 	"BMP.h"
 	<iostream>
 	<stdio.h>
 	<conio.h>
 
-1589886205 c:\users\user\documents\github\bmp_operations\bmpconverter\bmp2\include\bmp.h
+1589922835 c:\users\user\documents\github\bmp_operations\bmpconverter\bmp2\include\bmp.h
 	<iostream>
 	<stdio.h>
 
-1589886198 source:c:\users\user\documents\github\bmp_operations\bmpconverter\bmp2\main.cpp
+1589930031 source:c:\users\user\documents\github\bmp_operations\bmpconverter\bmp2\main.cpp
 	<stdio.h>
 	<windows.h>
 	<conio.h>

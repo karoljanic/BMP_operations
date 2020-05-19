@@ -25,7 +25,7 @@ int main()
 {
     int operacja = 0;
     char z = 0;
-    int n = 14;
+    int n = 13;
     string opcje[] = {"    Zmiana jasnosci     ",
                       "Zmiana nasycenia kolorow",
                       "  Zmiana skali kolorow  ",
@@ -36,7 +36,6 @@ int main()
                       "  Wykrywanie krawedzi   ",
                       " Aproksymacja poltonowa ",
                       "  Akcent kolorystyczny  ",
-                      "    Algorytm Retinex    ",
                       "    Efekt Tilt-Shift    ",
                       "        Tonowanie       ",
                       "Filtruj wlasnym filtrem "};
@@ -115,16 +114,14 @@ int main()
         photo.color_accent();
         break;
     case 10:
-        photo.retinex();
-        break;
-    case 11:
+        system("cls");
         photo.tilf_shift();
         break;
-    case 12:
+    case 11:
         system("cls");
         photo.color_toning();
         break;
-    case 13:
+    case 12:
         system("cls");
         photo.filtr();
         break;
