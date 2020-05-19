@@ -6,8 +6,11 @@
 
 using namespace std;
 
+
+
 BMP::BMP(const char *file_name)
 {
+
     if(picture = fopen(file_name, "rb"))
     {
         fread(&file_info.type,2,1,picture);
@@ -232,8 +235,6 @@ void BMP::filter(int **filter, int filter_size, int sum_of_filter, int i_p, int 
             else if(n>picture_info.width-1)
                 n = picture_info.width-1;
 
-            //cout << int(bitmap[m][n].R) << "  " << int(bitmap[m][n].G) << "  " << int(bitmap[m][n].B) << endl;
-
             sumR += int(bitmap[m][n].R)*filter[k][l];
             sumG += int(bitmap[m][n].G)*filter[k][l];
             sumB += int(bitmap[m][n].B)*filter[k][l];
@@ -273,20 +274,31 @@ void BMP::blur_image()
         bitmap2[i] = new Pixel [picture_info.width];
 
     int **f;
-    f = new int*[3];
+    /*f = new int*[3];
     for(int i = 0; i<3; i++)
     {
         f[i] = new int[3];
     }
-    f[1][1] = -4;
+    f[1][1] = 4;
     f[0][0] = 1, f[0][2] = 1, f[2][0] = 1, f[2][2] = 1;
-    f[0][1] = 1, f[1][0] = 1, f[1][2] = 1, f[2][1] = 1;
+    f[0][1] = 2, f[1][0] = 2, f[1][2] = 2, f[2][1] = 2;
+    */
+
+    f = new int*[8];
+    for(int i = 0; i<8; i++)
+        f[i] = new int[8];
+
+    for(int i=0; i<8; i++)
+    {
+        for(int j=0; j<8; j++)
+            f[i][j] = 1;
+    }
 
     for(int i = 0; i<picture_info.height; i++)
     {
         for(int j = 0; j<picture_info.width; j++)
         {
-            filter(f, 3, 4, i, j);
+            filter(f, 8, 64, i, j);
         }
     }
 
@@ -371,7 +383,7 @@ void BMP::halftone_approximation()
     {
         for(int j = 0; j<picture_info.width; j++)
         {
-            if(bitmap[i][j].R > 127)
+            if((bitmap[i][j].R + bitmap[i][j].G + bitmap[i][j].B)<381)
             {
                 bitmap[i][j].R = 0;
                 bitmap[i][j].G = 0;
@@ -388,14 +400,35 @@ void BMP::halftone_approximation()
 
 }
 
-void BMP::histogram()
-{
-
-}
-
 void BMP::color_accent()
 {
+    cout << "Wybierz kat odpowiadajacy barwie w modelu HSV, ktora checesz zaakcentowac!" << endl;
+    cout << "<0 - 360>(np.0 to czerowny, 120 to zielony, 240 to niebieski)" << endl;
+    float h = 666, r = -7;
+    while(h<0 || h>360)
+        cin >> h;
+    cout << "Podaj zakres akcentowanego koloru!<0 - 360>"<< endl;
+    while(r<0 || r>360)
+        cin >> r;
 
+    int h1 = int(h-r/2+360)%360;
+    int h2 = int(h+r/2+360)%360;
+
+    float grey;
+
+    for(int i = 0; i<picture_info.height; i++)
+    {
+        for(int j = 0; j<picture_info.width; j++)
+        {
+            if(!(( h1 <= h2 && h1 <= bitmap[i][j].hue && h2 >= bitmap[i][j].hue) ||( h1 > h2 && ( h1 <= bitmap[i][j].hue || h2 >= bitmap[i][j].hue ))))
+            {
+                grey = (char)(0.229*bitmap[i][j].R + 0.587*bitmap[i][j].G + 0.114*bitmap[i][j].B);
+                bitmap[i][j].R = (unsigned char) grey;
+                bitmap[i][j].G = (unsigned char) grey;
+                bitmap[i][j].B = (unsigned char) grey;
+            }
+        }
+    }
 }
 
 void BMP::retinex()
@@ -405,10 +438,115 @@ void BMP::retinex()
 
 void BMP::tilf_shift()
 {
+    bitmap2 = new Pixel *[picture_info.height];
+    for(int i = 0; i < picture_info.height; i++)
+        bitmap2[i] = new Pixel [picture_info.width];
+
+    int **f;
+    f = new int*[12];
+    for(int i = 0; i<12; i++)
+        f[i] = new int[12];
+
+    for(int i=0; i<12; i++)
+    {
+        for(int j=0; j<12; j++)
+            f[i][j] = 1;
+    }
+
+    for(int i = 0; i<picture_info.height; i++)
+    {
+        for(int j = 0; j<picture_info.width; j++)
+        {
+            filter(f, 12, 144, i, j);
+        }
+    }
+    float a,b,c,h;
+    cout << "Podaj 3 liczby odpowiadajace stosunkowi wydzielonych przez rozmycie czesci(np.: 3 2 3)" << endl;
+    cin >> a >> b >> c;
+    h = a+b+c;
+    h /= picture_info.height;
+    int h1, h2;
+    h1 = a/h;
+    h2 = (a+b)/h;
+    cout << a+b+c << "  " << h << "  " << picture_info.height << "  " << h1 << "  " << h2 << endl;
+    for(int i = 0; i<h1; i++)
+    {
+        for(int j = 0; j<picture_info.width; j++)
+            bitmap[i][j] = bitmap2[i][j];
+    }
+
+    for(int i = h2; i<picture_info.height; i++)
+    {
+        for(int j = 0; j<picture_info.width; j++)
+            bitmap[i][j] = bitmap2[i][j];
+    }
+
 
 }
 
 void BMP::color_toning()
 {
+    float h = 666;
+    cout << "Wybierz kat odpowiadajacy barwie w modelu HSV, ktora chesz tonowac!" << endl;
+    cout << "<0 - 360>(np.0 to czerowny, 120 to zielony, 240 to niebieski)" << endl;
+    while(h<0 || h>360)
+        cin >> h;
+
+    for(int i = 0; i<picture_info.height; i++)
+    {
+        for(int j = 0; j<picture_info.width; j++)
+        {
+               bitmap[i][j].hue = h;
+               bitmap[i][j].HSV_to_RGB();
+        }
+    }
+
+}
+
+void BMP::filtr()
+{
+    bitmap2 = new Pixel *[picture_info.height];
+    for(int i = 0; i < picture_info.height; i++)
+        bitmap2[i] = new Pixel [picture_info.width];
+
+    int n =2;
+    cout << "Podaj szerokosc filtra!Pamietaj aby byla ona liczba nieparzysta"<< endl;
+    while(n%2 != 1)
+        cin >> n;
+
+    int **f;
+    f = new int*[n];
+    for(int i = 0; i<n; i++)
+        f[i] = new int[n];
+    cout << "Podawaj kolejne wartosci filtra. Rozpoczynajac o lewego gornego elementu, a konczac na prawym dolnym!" << endl;
+    int suma = 0;
+    for(int i = 0; i<n; i++)
+    {
+        for(int j = 0; j<n; j++)
+        {
+            cin >> f[i][j];
+            suma += f[i][j];
+        }
+    }
+
+    if(suma == 0)
+        suma = 1;
+
+    for(int i = 0; i<picture_info.height; i++)
+    {
+        for(int j = 0; j<picture_info.width; j++)
+        {
+            filter(f, n, suma, i, j);
+        }
+    }
+
+    for(int i = 0; i<picture_info.height; i++)
+    {
+        for(int j = 0; j<picture_info.width; j++)
+        {
+            bitmap[i][j] = bitmap2[i][j];
+        }
+    }
+
 
 }

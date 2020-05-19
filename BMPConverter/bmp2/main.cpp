@@ -111,6 +111,7 @@ int main()
         photo.halftone_approximation();
         break;
     case 9:
+        system("cls");
         photo.color_accent();
         break;
     case 10:
@@ -120,10 +121,12 @@ int main()
         photo.tilf_shift();
         break;
     case 12:
+        system("cls");
         photo.color_toning();
         break;
     case 13:
-        cout << "filtrowanie!" << endl;
+        system("cls");
+        photo.filtr();
         break;
     }
 

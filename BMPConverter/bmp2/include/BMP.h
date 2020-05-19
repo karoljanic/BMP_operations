@@ -151,6 +151,7 @@ class BMP
         void retinex();
         void tilf_shift();
         void color_toning();
+        void filtr();
 
         Pixel **bitmap;
         Pixel **bitmap2;
